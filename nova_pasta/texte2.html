@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULADORA NEXT</title>
+    <link rel="icon" href="nova_pasta/e4e65a_fe3ebb908b914ff3b921b1c684c4eba0~mv2.jpg" type="image/x-icon">
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: #333;
+            background-image: url('imagens/manutencao-para-redes-distribuicao-de-energia-eletrica.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #00509e;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #003f7e;
+            margin-top: 30px;
+            font-size: 1.8em;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 220px;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        input[type="number"]:focus, input[type="text"]:focus {
+            border: 1px solid #00509e;
+            outline: none;
+        }
+        button {
+            background-color: #00509e;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #003f7e;
+        }
+        p {
+            font-size: 20px;
+            color: #333;
+            margin-top: 10px;
+        }
+        .resultado {
+            font-weight: bold;
+            color: #d9534f;
+            font-size: 22px;
+        }
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00509e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s;
+        }
+        .floating-button:hover {
+            background-color: #003f7e;
+        }
+        .calculator-popup {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 320px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            z-index: 10;
+        }
+        .calculator-popup.active {
+            display: block;
+        }
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .calculator-screen {
+            width: 100%;
+            height: 60px;
+            background-color: #dcdcdc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10px;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        .calculator-buttons button {
+            padding: 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            background-color: #00509e;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .calculator-buttons button:hover {
+            background-color: #003f7e;
+        }
+    </style>
+    <script>
+        let expression = '';
+
+        function updateScreen(value) {
+            const screen = document.getElementById('calculator-screen');
+            screen.innerText = value;
+        }
+
+        function appendToExpression(value) {
+            expression += value;
+            updateScreen(expression);
+        }
+
+        function calculate() {
+            try {
+                const resultado = eval(expression);
+                expression = resultado.toString();
+                updateScreen(expression);
+                copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ','));
+            } catch (error) {
+                updateScreen('Erro');
+            }
+        }
+
+        function clearScreen() {
+            expression = '';
+            updateScreen('0');
+        }
+
+        function calcularComprimento() {
+            const comprimento = document.getElementById("valorComprimento").value;
+            const resultado = (comprimento * 0.7) / 300 + 2; // Novo cálculo
+            document.getElementById("resultadoComprimento").innerText = "Faixa: " + resultado.toFixed(2).replace('.', ',') + " m";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " m");
+        }
+
+        function calcularRegraTres() {
+            const valor = parseFloat(document.getElementById("valorRegraTres").value);
+            const resultado = (valor * 1) / 6000; // Regra de três
+            document.getElementById("resultadoRegraTres").innerText = "Resultado: " + resultado.toFixed(2).replace('.', ',') + " mm";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " mm");
+        }
+
+        function calcularPerimetro() {
+            const altura = document.getElementById("altura").value;
+            const largura = document.getElementById("largura").value;
+            const resultado = 2 * (parseFloat(altura) + parseFloat(largura)) / 1000; // Cálculo de perímetro em metros
+            document.getElementById("resultadoPerimetro").innerText = "Perímetro: " + resultado.toFixed(2).replace('.', ',') + " m";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " m");
+        }
+
+        function converterLibrasParaQuilos() {
+            const libras = parseFloat(document.getElementById("libras").value);
+            const quilos = libras * 0.453592; // Conversão de libras para quilos
+            document.getElementById("resultadoLibras").innerText = "Resultado: " + quilos.toFixed(2).replace('.', ',') + " kg";
+            copiarParaAreaTransferencia(quilos.toFixed(2).replace('.', ',') + " kg");
+        }
+
+        function converterPolegadasParaMM() {
+            const polegadas = parseFloat(document.getElementById("polegadas").value);
+            const mm = polegadas * 25.4; // Conversão de polegadas para milímetros
+            document.getElementById("resultadoPolegadas").innerText = "Resultado: " + mm.toFixed(2).replace('.', ',') + " mm";
+            copiarParaAreaTransferencia(mm.toFixed(2).replace('.', ',') + " mm");
+        }
+
+        function copiarParaAreaTransferencia(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                console.log("Texto copiado para a área de transferência: " + texto);
+                alert("Resultado copiado: " + texto); // Aviso visual
+            }).catch(err => {
+                console.error("Erro ao copiar texto: ", err);
+            });
+        }
+
+        function toggleCalculatorPopup() {
+            const popup = document.getElementById("calculatorPopup");
+            popup.classList.toggle("active");
+        }
+
+        window.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                if (document.getElementById("expressaoPopup").value) {
+                    calcularExpressao();
+                } else if (document.getElementById("valorRegraTres").value) {
+                    calcularRegraTres();
+                } else if (document.getElementById("valorComprimento").value) {
+                    calcularComprimento();
+                } else if (document.getElementById("altura").value && document.getElementById("largura").value) {
+                    calcularPerimetro();
+                } else if (document.getElementById("libras").value) {
+                    converterLibrasParaQuilos();
+                } else if (document.getElementById("polegadas").value) {
+                    converterPolegadasParaMM();
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>CALCULADORA NEXT</h1>
+    <button class="floating-button" onclick="toggleCalculatorPopup()">☀️</button>
+    <div id="calculatorPopup" class="calculator-popup">
+        <div class="calculator">
+            <div id="calculator-screen" class="calculator-screen">0</div>
+            <div class="calculator-buttons">
+                <button onclick="appendToExpression('7')">7</button>
+                <button onclick="appendToExpression('8')">8</button>
+                <button onclick="appendToExpression('9')">9</button>
+                <button onclick="appendToExpression('/')">/</button>
+                <button onclick="appendToExpression('4')">4</button>
+                <button onclick="appendToExpression('5')">5</button>
+                <button onclick="appendToExpression('6')">6</button>
+                <button onclick="appendToExpression('*')">*</button>
+                <button onclick="appendToExpression('1')">1</button>
+                <button onclick="appendToExpression('2')">2</button>
+                <button onclick="appendToExpression('3')">3</button>
+                <button onclick="calculate()">=</button>
+                <button onclick="appendToExpression('0')">0</button>
+                <button onclick="clearScreen()">C</button>
+                <button onclick="appendToExpression('-')">-</button>
+                <button onclick="appendToExpression('+')">+</button>
+            </div>
+        </div>
+    </div>
+    <h2>Cálculos Específicos</h2>
+
+    <h3>Calcular Comprimento</h3>
+    <label for="valorComprimento">Valor do Comprimento (em m):</label>
+    <input type="number" id="valorComprimento" placeholder="Digite o comprimento">
+    <button onclick="calcularComprimento()">Calcular</button>
+    <p id="resultadoComprimento" class="resultado"></p>
+
+    <h3>Regra de Três</h3>
+    <label for="valorRegraTres">Valor:</label>
+    <input type="number" id="valorRegraTres" placeholder="Digite o valor">
+    <button onclick="calcularRegraTres()">Calcular</button>
+    <p id="resultadoRegraTres" class="resultado"></p>
+
+    <h3>Calcular Perímetro</h3>
+    <label for="altura">Altura (em cm):</label>
+    <input type="number" id="altura" placeholder="Digite a altura">
+    <label for="largura">Largura (em cm):</label>
+    <input type="number" id="largura" placeholder="Digite a largura">
+    <button onclick="calcularPerimetro()">Calcular</button>
+    <p id="resultadoPerimetro" class="resultado"></p>
+
+    <h3>Converter Libras para Quilos</h3>
+    <label for="libras">Libras:</label>
+    <input type="number" id="libras" placeholder="Digite o valor em libras">
+    <button onclick="converterLibrasParaQuilos()">Converter</button>
+    <p id="resultadoLibras" class="resultado"></p>
+
+    <h3>Converter Polegadas para mm</h3>
+    <label for="polegadas">Polegadas:</label>
+    <input type="number" id="polegadas" placeholder="Digite o valor em polegadas">
+    <button onclick="converterPolegadasParaMM()">Converter</button>
+    <p id="resultadoPolegadas" class="resultado"></p>
+
+    <script>
+        // Código JavaScript permanece o mesmo
+    </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULADORA NEXT</title>
+    <link rel="icon" href="nova_pasta/e4e65a_fe3ebb908b914ff3b921b1c684c4eba0~mv2.jpg" type="image/x-icon">
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: #333;
+            background-image: url('imagens/manutencao-para-redes-distribuicao-de-energia-eletrica.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        h1 {
+            color: #00509e;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="number"], input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #00509e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #003f7e;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .resultado {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00509e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .calculator-popup {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+        }
+        .calculator-popup.active {
+            display: block;
+        }
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .calculator-buttons button {
+            padding: 20px;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        @media (max-width: 600px) {
+            input[type="number"], input[type="text"], button {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        function calcularComprimento() {
+            const comprimento = document.getElementById("valorComprimento").value;
+            const resultado = comprimento / 100; // Exemplo de cálculo
+            document.getElementById("resultadoComprimento").innerText = "Faixa: " + resultado.toFixed(2).replace('.', ',') + " m";
+        }
+
+        function calcularRegraTres() {
+            const valor = parseFloat(document.getElementById("valorRegraTres").value);
+            const resultado = (valor * 1) / 6000; // Regra de três
+            document.getElementById("resultadoRegraTres").innerText = "Resultado: " + resultado.toFixed(2).replace('.', ',') + " mm";
+        }
+
+        function calcularPerimetro() {
+            const altura = document.getElementById("altura").value;
+            const largura = document.getElementById("largura").value;
+            const resultado = 2 * (parseFloat(altura) + parseFloat(largura)); // Cálculo do perímetro
+            document.getElementById("resultadoPerimetro").innerText = "Perímetro: " + resultado.toFixed(2).replace('.', ',') + " mm";
+        }
+
+        function converterLibrasParaQuilos() {
+            const libras = parseFloat(document.getElementById("libras").value);
+            const quilos = libras * 0.453592; // Conversão de libras para quilos
+            document.getElementById("resultadoLibras").innerText = "Resultado: " + quilos.toFixed(2).replace('.', ',') + " kg";
+        }
+
+        function converterPolegadasParaMM() {
+            const polegadas = parseFloat(document.getElementById("polegadas").value);
+            const mm = polegadas * 25.4; // Conversão de polegadas para milímetros
+            document.getElementById("resultadoPolegadas").innerText = "Resultado: " + mm.toFixed(2).replace('.', ',') + " mm";
+        }
+
+        function calcularExpressao() {
+            const expressao = document.getElementById("expressaoPopup").value;
+            try {
+                const resultado = eval(expressao);
+                document.getElementById("resultadoPopup").innerText = "Resultado: " + resultado.toFixed(2).replace('.', ',');
+            } catch (e) {
+                document.getElementById("resultadoPopup").innerText = "Expressão inválida";
+            }
+        }
+
+        function toggleCalculatorPopup() {
+            const popup = document.getElementById("calculatorPopup");
+            popup.classList.toggle("active");
+        }
+
+        window.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                if (document.getElementById("expressaoPopup").value) {
+                    calcularExpressao();
+                } else if (document.getElementById("valorRegraTres").value) {
+                    calcularRegraTres();
+                } else if (document.getElementById("valorComprimento").value) {
+                    calcularComprimento();
+                } else if (document.getElementById("altura").value && document.getElementById("largura").value) {
+                    calcularPerimetro();
+                } else if (document.getElementById("libras").value) {
+                    converterLibrasParaQuilos();
+                } else if (document.getElementById("polegadas").value) {
+                    converterPolegadasParaMM();
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>DIGITE O COMPRIMENTO DA CARROCERIA:</h1>
+    <label for="valorComprimento">DIGITE EM MM</label>
+    <input type="number" id="valorComprimento" required min="0" step="any">
+    <button onclick="calcularComprimento()">CALCULAR FAIXA</button>
+    <p id="resultadoComprimento" class="resultado"></p>
+
+    <h1>DIGITE O VALOR PARA A REGRA DE TRÊS:</h1>
+    <label for="valorRegraTres">VALOR EM MM</label>
+    <input type="number" id="valorRegraTres" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularRegraTres()">
+    <button onclick="calcularRegraTres()">CALCULAR</button>
+    <p id="resultadoRegraTres" class="resultado"></p>
+
+    <h1>DIGITE A ALTURA E LARGURA DO ARMÁRIO:</h1>
+    <label for="altura">ALTURA EM MM</label>
+    <input type="number" id="altura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
+    <label for="largura">LARGURA EM MM</label>
+    <input type="number" id="largura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
+    <button onclick="calcularPerimetro()">CALCULAR PERÍMETRO</button>
+    <p id="resultadoPerimetro" class="resultado"></p>
+
+    <h1>CONVERSOR DE LIBRAS PARA QUILOS:</h1>
+    <label for="libras">DIGITE EM LIBRAS</label>
+    <input type="number" id="libras" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterLibrasParaQuilos()">
+    <button onclick="converterLibrasParaQuilos()">CONVERTER</button>
+    <p id="resultadoLibras" class="resultado"></p>
+
+    <h1>CONVERSOR DE POLEGADAS PARA MILÍMETROS:</h1>
+    <label for="polegadas">DIGITE EM POLEGADAS</label>
+    <input type="number" id="polegadas" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterPolegadasParaMM()">
+    <button onclick="converterPolegadasParaMM()">CONVERTER</button>
+    <p id="resultadoPolegadas" class="resultado"></p>
+
+    <button class="floating-button" onclick="toggleCalculatorPopup()">🧮</button>
+    <div id="calculatorPopup" class="calculator-popup">
+        <h2>CALCULADORA FLUTUANTE</h2>
+        <input type="text" id="expressaoPopup" placeholder="Digite a expressão...">
+        <button onclick="calcularExpressao()">CALCULAR</button>
+        <p id="resultadoPopup" class="resultado"></p>
+        <button onclick="toggleCalculatorPopup()">FECHAR</button>
+    </div>
+</body>
+</html>
