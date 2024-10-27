@@ -11,7 +11,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             color: #333;
-            background-image: url('imagens/manutencao-para-redes-distribuicao-de-energia-eletrica.jpg'); /* Corrigido para barras normais */
+            background-image: url('imagens/manutencao-para-redes-distribuicao-de-energia-eletrica.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -21,7 +21,7 @@
         label {
             font-weight: bold;
         }
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             width: 200px;
             padding: 10px;
             margin: 10px 0;
@@ -48,133 +48,243 @@
             font-weight: bold;
             color: #d9534f;
         }
-        .iframe-container {
-            margin-top: 20px;
-        }
-        .iframe-container iframe {
-            width: 80%;
-            height: 400px;
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00509e;
+            color: white;
             border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
         }
-        .iframe-container a {
+        .calculator-popup {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+        }
+        .calculator-popup.active {
             display: block;
-            margin-top: 10px;
-            color: #00509e;
-            font-weight: bold;
         }
-        @media (max-width: 600px) {
-            input[type="number"] {
-                width: 100%;
-            }
-            button {
-                width: 100%;
-            }
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .calculator-screen {
+            width: 100%;
+            height: 60px;
+            background-color: #dcdcdc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10px;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        .calculator-buttons button {
+            padding: 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            background-color: #00509e;
+            color: white;
+        }
+        .calculator-buttons button:hover {
+            background-color: #003f7e;
         }
     </style>
     <script>
-        function formatarNumero(numero) {
-            return numero.toLocaleString('pt-BR', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2
-            });
+        let expression = '';
+
+        function updateScreen(value) {
+            const screen = document.getElementById('calculator-screen');
+            screen.innerText = value;
+        }
+
+        function appendToExpression(value) {
+            expression += value;
+            updateScreen(expression);
+        }
+
+        function calculate() {
+            try {
+                const resultado = eval(expression);
+                expression = resultado.toString();
+                updateScreen(expression);
+                copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ','));
+            } catch (error) {
+                updateScreen('Erro');
+            }
+        }
+
+        function clearScreen() {
+            expression = '';
+            updateScreen('0');
         }
 
         function calcularComprimento() {
-            const valorMm = parseFloat(document.getElementById("valorComprimento").value);
-            if (isNaN(valorMm) || valorMm < 0) {
-                alert("Por favor, insira um número válido e positivo.");
-                return;
-            }
-
-            const multiplicacao = valorMm * 0.7;
-            const divisao = multiplicacao / 300;
-            const resultado = divisao + 2;
-            const resultadoFormatado = formatarNumero(resultado);
-            const resultadoText = "O resultado do cálculo de comprimento é: " + resultadoFormatado;
-            document.getElementById("resultadoComprimento").innerText = resultadoText;
-
-            navigator.clipboard.writeText(resultadoText).then(() => {
-                alert("Resultado copiado para a área de transferência!");
-            });
+            const comprimento = document.getElementById("valorComprimento").value;
+            const resultado = (comprimento * 0.7) / 300 + 2; // Novo cálculo
+            document.getElementById("resultadoComprimento").innerText = "Faixa: " + resultado.toFixed(2).replace('.', ',') + " m";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " m");
         }
 
         function calcularRegraTres() {
-            const valorMm = parseFloat(document.getElementById("valorRegraTres").value);
-            if (isNaN(valorMm) || valorMm < 0) {
-                alert("Por favor, insira um número válido e positivo.");
-                return;
-            }
-
-            const regraTres = (valorMm * 1) / 6000;
-            const resultadoFormatado = formatarNumero(regraTres);
-            const resultadoText = "Resultado da regra de três (6000 mm = 1): " + resultadoFormatado;
-            document.getElementById("resultadoRegraTres").innerText = resultadoText;
-
-            navigator.clipboard.writeText(resultadoText).then(() => {
-                alert("Resultado copiado para a área de transferência!");
-            });
+            const valor = parseFloat(document.getElementById("valorRegraTres").value);
+            const resultado = (valor * 1) / 6000; // Regra de três
+            document.getElementById("resultadoRegraTres").innerText = "Resultado: " + resultado.toFixed(2).replace('.', ',') + " mm";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " mm");
         }
 
         function calcularPerimetro() {
-            const alturaMm = parseFloat(document.getElementById("altura").value);
-            const larguraMm = parseFloat(document.getElementById("largura").value);
+            const altura = document.getElementById("altura").value;
+            const largura = document.getElementById("largura").value;
+            const resultado = 2 * (parseFloat(altura) + parseFloat(largura)) / 1000; // Cálculo de perímetro em metros
+            document.getElementById("resultadoPerimetro").innerText = "Perímetro: " + resultado.toFixed(2).replace('.', ',') + " m";
+            copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " m");
+        }
 
-            if (isNaN(alturaMm) || alturaMm < 0 || isNaN(larguraMm) || larguraMm < 0) {
-                alert("Por favor, insira números válidos e positivos.");
-                return;
-            }
+        function converterLibrasParaQuilos() {
+            const libras = parseFloat(document.getElementById("libras").value);
+            const quilos = libras * 0.453592; // Conversão de libras para quilos
+            document.getElementById("resultadoLibras").innerText = "Resultado: " + quilos.toFixed(2).replace('.', ',') + " kg";
+            copiarParaAreaTransferencia(quilos.toFixed(2).replace('.', ',') + " kg");
+        }
 
-            const perimetro = 2 * (alturaMm + larguraMm) / 1000;
-            const resultadoFormatado = formatarNumero(perimetro);
-            const resultadoText = "O perímetro é: " + resultadoFormatado + " metros";
-            document.getElementById("resultadoPerimetro").innerText = resultadoText;
+        function converterPolegadasParaMM() {
+            const polegadas = parseFloat(document.getElementById("polegadas").value);
+            const mm = polegadas * 25.4; // Conversão de polegadas para milímetros
+            document.getElementById("resultadoPolegadas").innerText = "Resultado: " + mm.toFixed(2).replace('.', ',') + " mm";
+            copiarParaAreaTransferencia(mm.toFixed(2).replace('.', ',') + " mm");
+        }
 
-            navigator.clipboard.writeText(resultadoText).then(() => {
-                alert("Resultado copiado para a área de transferência!");
+        function copiarParaAreaTransferencia(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                console.log("Texto copiado para a área de transferência: " + texto);
+            }).catch(err => {
+                console.error("Erro ao copiar texto: ", err);
             });
         }
 
-        window.onload = function() {
-            const inputs = document.querySelectorAll("input[type='number']");
-            inputs.forEach(input => {
-                input.addEventListener("keydown", function(event) {
-                    if (event.key === "Enter") {
-                        const calcularFunc = input.id.includes("Comprimento") ? calcularComprimento :
-                                             input.id.includes("RegraTres") ? calcularRegraTres :
-                                             calcularPerimetro;
-                        calcularFunc();
-                    }
-                });
-            });
-        };
+        function toggleCalculatorPopup() {
+            const popup = document.getElementById("calculatorPopup");
+            popup.classList.toggle("active");
+        }
+
+        window.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                if (document.getElementById("expressaoPopup").value) {
+                    calcularExpressao();
+                } else if (document.getElementById("valorRegraTres").value) {
+                    calcularRegraTres();
+                } else if (document.getElementById("valorComprimento").value) {
+                    calcularComprimento();
+                } else if (document.getElementById("altura").value && document.getElementById("largura").value) {
+                    calcularPerimetro();
+                } else if (document.getElementById("libras").value) {
+                    converterLibrasParaQuilos();
+                } else if (document.getElementById("polegadas").value) {
+                    converterPolegadasParaMM();
+                }
+            }
+        });
+
+        // Permitir colar e calcular ao pressionar Enter
+        window.addEventListener("paste", function(event) {
+            const input = event.target;
+            if (input.tagName === 'INPUT') {
+                const pastedData = event.clipboardData.getData('text');
+                input.value = pastedData;
+                input.dispatchEvent(new Event('input')); // Dispara evento de input
+                if (input.id === "valorRegraTres") {
+                    calcularRegraTres();
+                } else if (input.id === "valorComprimento") {
+                    calcularComprimento();
+                } else if (input.id === "altura" || input.id === "largura") {
+                    calcularPerimetro();
+                } else if (input.id === "libras") {
+                    converterLibrasParaQuilos();
+                } else if (input.id === "polegadas") {
+                    converterPolegadasParaMM();
+                }
+            }
+        });
     </script>
 </head>
 <body>
-    <h1>DIGITE O COMPRIMENTO DA CARROCERIA: </h1>
-    <label for="valorComprimento">DIGITE EM MM </label>
-    <input type="number" id="valorComprimento" required min="0" step="any">
-    <button onclick="calcularComprimento()">CALCULAR FAIXA</button>
+    <h1>DIGITE O COMPRIMENTO DA CARROCERIA:</h1>
+    <label for="valorComprimento">DIGITE EM MM</label>
+    <input type="number" id="valorComprimento" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularComprimento()">
     <p id="resultadoComprimento" class="resultado"></p>
 
-    <h1>DIGITE O COMPRIMENTO DE CADA TUBO: </h1>
-    <label for="valorRegraTres">DIGITE EM MM</label>
-    <input type="number" id="valorRegraTres" required min="0" step="any">
-    <button onclick="calcularRegraTres()">CALCULAR TUBO</button>
+    <h1>DIGITE O VALOR PARA REGRA DE TRÊS:</h1>
+    <label for="valorRegraTres">VALOR EM MM</label>
+    <input type="number" id="valorRegraTres" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularRegraTres()">
     <p id="resultadoRegraTres" class="resultado"></p>
 
-    <h1>DIGITE A ALTURA E LARGURA DO ARMÁRIO:</h1>
+    <h1>DIGITE A ALTURA E A LARGURA DO ARMÁRIO:</h1>
     <label for="altura">ALTURA EM MM</label>
-    <input type="number" id="altura" required min="0" step="any">
+    <input type="number" id="altura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
     <label for="largura">LARGURA EM MM</label>
-    <input type="number" id="largura" required min="0" step="any">
+    <input type="number" id="largura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
     <button onclick="calcularPerimetro()">CALCULAR PERÍMETRO</button>
-    <p class="resultado" id="resultadoPerimetro"></p>
+    <p id="resultadoPerimetro" class="resultado"></p>
 
-    <div class="iframe-container">
-        <iframe src="https://convertlive.com/pt/w/converter/libras/em/quilos">
-            <p>Seu navegador não suporta iframes. <a href="https://convertlive.com/pt/converter">convertlive</a>.</p>
-        </iframe>
-        <a target="_blank" rel="noopener" href="https://convertlive.com/pt/converter">convertlive</a>
+    <h1>DIGITE O VALOR EM LIBRAS:</h1>
+    <label for="libras">VALOR EM LIBRAS</label>
+    <input type="number" id="libras" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterLibrasParaQuilos()">
+    <button onclick="converterLibrasParaQuilos()">CONVERTER PARA QUILOS</button>
+    <p id="resultadoLibras" class="resultado"></p>
+
+    <h1>DIGITE O VALOR EM POLEGADAS:</h1>
+    <label for="polegadas">VALOR EM POLEGADAS</label>
+    <input type="number" id="polegadas" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterPolegadasParaMM()">
+    <button onclick="converterPolegadasParaMM()">CONVERTER PARA MM</button>
+    <p id="resultadoPolegadas" class="resultado"></p>
+
+    <button class="floating-button" onclick="toggleCalculatorPopup()">+</button>
+
+    <div id="calculatorPopup" class="calculator-popup">
+        <div class="calculator">
+            <h2>CÁLCULO RÁPIDO</h2>
+            <div class="calculator-screen" id="calculator-screen">0</div>
+            <div class="calculator-buttons">
+                <button onclick="appendToExpression('7')">7</button>
+                <button onclick="appendToExpression('8')">8</button>
+                <button onclick="appendToExpression('9')">9</button>
+                <button onclick="appendToExpression('/')">/</button>
+                <button onclick="appendToExpression('4')">4</button>
+                <button onclick="appendToExpression('5')">5</button>
+                <button onclick="appendToExpression('6')">6</button>
+                <button onclick="appendToExpression('*')">*</button>
+                <button onclick="appendToExpression('1')">1</button>
+                <button onclick="appendToExpression('2')">2</button>
+                <button onclick="appendToExpression('3')">3</button>
+                <button onclick="appendToExpression('-')">-</button>
+                <button onclick="clearScreen()">C</button>
+                <button onclick="appendToExpression('0')">0</button>
+                <button onclick="calculate()">=</button>
+                <button onclick="appendToExpression('+')">+</button>
+            </div>
+            <button onclick="toggleCalculatorPopup()">FECHAR</button>
+        </div>
     </div>
 </body>
 </html>
