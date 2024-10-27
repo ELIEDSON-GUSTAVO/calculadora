@@ -234,36 +234,32 @@
     <input type="number" id="valorComprimento" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularComprimento()">
     <p id="resultadoComprimento" class="resultado"></p>
 
-    <h1>DIGITE O VALOR PARA REGRA DE TRÊS:</h1>
-    <label for="valorRegraTres">VALOR EM MM</label>
+    <h1>CALCULO DE REGRA DE TRÊS:</h1>
+    <label for="valorRegraTres">VALOR</label>
     <input type="number" id="valorRegraTres" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularRegraTres()">
     <p id="resultadoRegraTres" class="resultado"></p>
 
-    <h1>DIGITE A ALTURA E A LARGURA DO ARMÁRIO:</h1>
-    <label for="altura">ALTURA EM MM</label>
+    <h1>CÁLCULO DE PERÍMETRO:</h1>
+    <label for="altura">ALTURA (m):</label>
     <input type="number" id="altura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
-    <label for="largura">LARGURA EM MM</label>
+    <label for="largura">LARGURA (m):</label>
     <input type="number" id="largura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
-    <button onclick="calcularPerimetro()">CALCULAR PERÍMETRO</button>
     <p id="resultadoPerimetro" class="resultado"></p>
 
-    <h1>DIGITE O VALOR EM LIBRAS:</h1>
-    <label for="libras">VALOR EM LIBRAS</label>
+    <h1>CONVERSÃO:</h1>
+    <label for="libras">Libras:</label>
     <input type="number" id="libras" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterLibrasParaQuilos()">
-    <button onclick="converterLibrasParaQuilos()">CONVERTER PARA QUILOS</button>
     <p id="resultadoLibras" class="resultado"></p>
 
-    <h1>DIGITE O VALOR EM POLEGADAS:</h1>
-    <label for="polegadas">VALOR EM POLEGADAS</label>
+    <label for="polegadas">Polegadas:</label>
     <input type="number" id="polegadas" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterPolegadasParaMM()">
-    <button onclick="converterPolegadasParaMM()">CONVERTER PARA MM</button>
     <p id="resultadoPolegadas" class="resultado"></p>
 
-    <button class="floating-button" onclick="toggleCalculatorPopup()">+</button>
+    <button class="floating-button" onclick="toggleCalculatorPopup()">📐</button>
 
     <div id="calculatorPopup" class="calculator-popup">
+        <h2>Calculadora</h2>
         <div class="calculator">
-            <h2>CÁLCULO RÁPIDO</h2>
             <div class="calculator-screen" id="calculator-screen">0</div>
             <div class="calculator-buttons">
                 <button onclick="appendToExpression('7')">7</button>
@@ -277,13 +273,12 @@
                 <button onclick="appendToExpression('1')">1</button>
                 <button onclick="appendToExpression('2')">2</button>
                 <button onclick="appendToExpression('3')">3</button>
-                <button onclick="appendToExpression('-')">-</button>
-                <button onclick="clearScreen()">C</button>
-                <button onclick="appendToExpression('0')">0</button>
                 <button onclick="calculate()">=</button>
+                <button onclick="appendToExpression('0')">0</button>
+                <button onclick="clearScreen()">C</button>
+                <button onclick="appendToExpression('-')">-</button>
                 <button onclick="appendToExpression('+')">+</button>
             </div>
-            <button onclick="toggleCalculatorPopup()">FECHAR</button>
         </div>
     </div>
 </body>
