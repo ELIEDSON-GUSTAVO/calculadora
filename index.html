@@ -229,36 +229,12 @@
     </script>
 </head>
 <body>
-    <h1>DIGITE O COMPRIMENTO DA CARROCERIA:</h1>
-    <label for="valorComprimento">DIGITE EM MM</label>
-    <input type="number" id="valorComprimento" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularComprimento()">
-    <p id="resultadoComprimento" class="resultado"></p>
+    <h1>DIGITE O VALOR QUE DESEJA CALCULAR</h1>
 
-    <h1>CALCULO DE REGRA DE TRÊS:</h1>
-    <label for="valorRegraTres">VALOR</label>
-    <input type="number" id="valorRegraTres" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularRegraTres()">
-    <p id="resultadoRegraTres" class="resultado"></p>
+    <button class="floating-button" onclick="toggleCalculatorPopup()">+</button>
+    <button class="floating-button" style="left: 20px;" onclick="window.location.href='outra_pagina.html'">🔗</button>
 
-    <h1>CÁLCULO DE PERÍMETRO:</h1>
-    <label for="altura">ALTURA (m):</label>
-    <input type="number" id="altura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
-    <label for="largura">LARGURA (m):</label>
-    <input type="number" id="largura" required min="0" step="any" onkeypress="if(event.key === 'Enter') calcularPerimetro()">
-    <p id="resultadoPerimetro" class="resultado"></p>
-
-    <h1>CONVERSÃO:</h1>
-    <label for="libras">Libras:</label>
-    <input type="number" id="libras" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterLibrasParaQuilos()">
-    <p id="resultadoLibras" class="resultado"></p>
-
-    <label for="polegadas">Polegadas:</label>
-    <input type="number" id="polegadas" required min="0" step="any" onkeypress="if(event.key === 'Enter') converterPolegadasParaMM()">
-    <p id="resultadoPolegadas" class="resultado"></p>
-
-    <button class="floating-button" onclick="toggleCalculatorPopup()">📐</button>
-
-    <div id="calculatorPopup" class="calculator-popup">
-        <h2>Calculadora</h2>
+    <div class="calculator-popup" id="calculatorPopup">
         <div class="calculator">
             <div class="calculator-screen" id="calculator-screen">0</div>
             <div class="calculator-buttons">
@@ -274,12 +250,47 @@
                 <button onclick="appendToExpression('2')">2</button>
                 <button onclick="appendToExpression('3')">3</button>
                 <button onclick="calculate()">=</button>
-                <button onclick="appendToExpression('0')">0</button>
                 <button onclick="clearScreen()">C</button>
-                <button onclick="appendToExpression('-')">-</button>
-                <button onclick="appendToExpression('+')">+</button>
             </div>
         </div>
     </div>
+
+    <div>
+        <label for="valorRegraTres">Valor da Regra de Três:</label>
+        <input type="number" id="valorRegraTres" placeholder="Digite um valor">
+        <button onclick="calcularRegraTres()">Calcular</button>
+        <p class="resultado" id="resultadoRegraTres"></p>
+    </div>
+
+    <div>
+        <label for="valorComprimento">Valor do Comprimento:</label>
+        <input type="number" id="valorComprimento" placeholder="Digite um valor">
+        <button onclick="calcularComprimento()">Calcular</button>
+        <p class="resultado" id="resultadoComprimento"></p>
+    </div>
+
+    <div>
+        <label for="altura">Altura:</label>
+        <input type="number" id="altura" placeholder="Digite a altura">
+        <label for="largura">Largura:</label>
+        <input type="number" id="largura" placeholder="Digite a largura">
+        <button onclick="calcularPerimetro()">Calcular Perímetro</button>
+        <p class="resultado" id="resultadoPerimetro"></p>
+    </div>
+
+    <div>
+        <label for="libras">Libras:</label>
+        <input type="number" id="libras" placeholder="Digite em libras">
+        <button onclick="converterLibrasParaQuilos()">Converter para Quilos</button>
+        <p class="resultado" id="resultadoLibras"></p>
+    </div>
+
+    <div>
+        <label for="polegadas">Polegadas:</label>
+        <input type="number" id="polegadas" placeholder="Digite em polegadas">
+        <button onclick="converterPolegadasParaMM()">Converter para Milímetros</button>
+        <p class="resultado" id="resultadoPolegadas"></p>
+    </div>
+
 </body>
 </html>
