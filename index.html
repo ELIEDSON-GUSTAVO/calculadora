@@ -234,14 +234,15 @@
     <button class="floating-button" onclick="toggleCalculatorPopup()">📐</button>
     <button class="floating-button" style="left: 20px;" onclick="window.location.href='TEXTE.HTML'">🔗</button>
 
-    <div class="calculator-popup" id="calculatorPopup">
+    <div id="calculatorPopup" class="calculator-popup">
+        <h2>Calculadora</h2>
         <div class="calculator">
             <div class="calculator-screen" id="calculator-screen">0</div>
             <div class="calculator-buttons">
                 <button onclick="appendToExpression('7')">7</button>
                 <button onclick="appendToExpression('8')">8</button>
                 <button onclick="appendToExpression('9')">9</button>
-         		<button onclick="appendToExpression('/')">/</button>
+                <button onclick="appendToExpression('/')">/</button>
                 <button onclick="appendToExpression('4')">4</button>
                 <button onclick="appendToExpression('5')">5</button>
                 <button onclick="appendToExpression('6')">6</button>
@@ -250,7 +251,10 @@
                 <button onclick="appendToExpression('2')">2</button>
                 <button onclick="appendToExpression('3')">3</button>
                 <button onclick="calculate()">=</button>
+                <button onclick="appendToExpression('0')">0</button>
                 <button onclick="clearScreen()">C</button>
+                <button onclick="appendToExpression('-')">-</button>
+                <button onclick="appendToExpression('+')">+</button>
             </div>
         </div>
     </div>
