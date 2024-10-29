@@ -229,37 +229,234 @@
     </script>
 </head>
 <body>
-    <h1>CALCULADORA</h1>
+<style>
+     body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+        }
 
-    <button class="floating-button" onclick="toggleCalculatorPopup()">📐</button>
-    <button class="floating-button" style="left: 20px;" onclick="window.location.href='TEXTE.HTML'">🔗</button>
+        .calculadora {
+            width: 320px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            color: white;
+        }
 
-    <div id="calculatorPopup" class="calculator-popup">
-        <h2>Calculadora</h2>
-        <div class="calculator">
-            <div class="calculator-screen" id="calculator-screen">0</div>
-            <div class="calculator-buttons">
-                <button onclick="appendToExpression('7')">7</button>
-                <button onclick="appendToExpression('8')">8</button>
-                <button onclick="appendToExpression('9')">9</button>
-                <button onclick="appendToExpression('/')">/</button>
-                <button onclick="appendToExpression('4')">4</button>
-                <button onclick="appendToExpression('.')">.</button>
-                <button onclick="appendToExpression('5')">5</button>
-                <button onclick="appendToExpression('6')">6</button>
-                <button onclick="appendToExpression('*')">*</button>
-                <button onclick="appendToExpression('1')">1</button>
-                <button onclick="appendToExpression('2')">2</button>
-                <button onclick="appendToExpression('3')">3</button>
-                <button onclick="calculate()">=</button>
-                <button onclick="appendToExpression('0')">0</button>
-                <button onclick="clearScreen()">C</button>
-                <button onclick="appendToExpression('-')">-</button>
-                <button onclick="appendToExpression('+')">+</button>
-            </div>
+        .display {
+            background-color: #444;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 1.5em;
+            text-align: right;
+            overflow: hidden;
+        }
+
+        .botoes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .botao {
+            background-color: #666;
+            border: none;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .botao.operacao {
+            background-color: #f39c12;
+        }
+
+        .botao.funcao {
+            background-color: #3498db;
+        }
+
+        .botao:active {
+            transform: scale(0.95);
+        }
+
+        .botao:hover {
+            background-color: #888;
+        }
+
+        .botao.operacao:hover {
+            background-color: #e67e22;
+        }
+
+        .botao.funcao:hover {
+            background-color: #2980b9;
+        }
+
+        #funcoes {
+            margin-top: 20px;
+        }
+
+        #funcoes input {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        #funcoes button {
+            padding: 10px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f39c12;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculadora">
+        <div id="display" class="display">0</div>
+        <div class="botoes">
+            <button class="botao funcao" onclick="limpar()">C</button>
+            <button class="botao funcao" onclick="apagar()">⌫</button>
+            <button class="botao funcao" onclick="adicionarOperacao('%')">%</button>
+            <button class="botao operacao" onclick="adicionarOperacao('/')">÷</button>
+
+            <button class="botao" onclick="adicionarNumero('7')">7</button>
+            <button class="botao" onclick="adicionarNumero('8')">8</button>
+            <button class="botao" onclick="adicionarNumero('9')">9</button>
+            <button class="botao operacao" onclick="adicionarOperacao('*')">×</button>
+
+            <button class="botao" onclick="adicionarNumero('4')">4</button>
+            <button class="botao" onclick="adicionarNumero('5')">5</button>
+            <button class="botao" onclick="adicionarNumero('6')">6</button>
+            <button class="botao operacao" onclick="adicionarOperacao('-')">−</button>
+
+            <button class="botao" onclick="adicionarNumero('1')">1</button>
+            <button class="botao" onclick="adicionarNumero('2')">2</button>
+            <button class="botao" onclick="adicionarNumero('3')">3</button>
+            <button class="botao operacao" onclick="adicionarOperacao('+')">+</button>
+
+            <button class="botao funcao" onclick="calcularRaiz()">√</button>
+            <button class="botao" onclick="adicionarNumero('0')">0</button>
+            <button class="botao funcao" onclick="adicionarOperacao('.')">.</button>
+            <button class="botao operacao" onclick="calcular()">=</button>
+        </div>
+
+        <div id="funcoes">
+            <input type="text" id="funcaoInput" placeholder="Digite uma função (ex: f(x) = x^2)">
+            <button onclick="definirFuncao()">Definir Função</button>
+            <button onclick="calcularFuncao()">Calcular Função</button>
         </div>
     </div>
 
+    <script>
+        let display = document.getElementById("display");
+        let funcoes = {};
+
+        // Função para adicionar número ao display
+        function adicionarNumero(numero) {
+            if (display.innerText === "0") {
+                display.innerText = numero;
+            } else {
+                display.innerText += numero;
+            }
+        }
+
+        // Função para adicionar operação ao display
+        function adicionarOperacao(operacao) {
+            display.innerText += operacao;
+        }
+
+        // Função para calcular a raiz quadrada
+        function calcularRaiz() {
+            try {
+                let valorAtual = parseFloat(display.innerText);
+                if (valorAtual >= 0) {
+                    display.innerText = Math.sqrt(valorAtual);
+                } else {
+                    display.innerText = "Erro";
+                }
+            } catch (error) {
+                display.innerText = "Erro";
+            }
+        }
+
+        // Função para calcular a expressão no display
+        function calcular() {
+            try {
+                let resultado = eval(display.innerText);
+                display.innerText = resultado;
+            } catch (error) {
+                display.innerText = "Erro";
+            }
+        }
+
+        // Função para limpar o display
+        function limpar() {
+            display.innerText = "0";
+        }
+
+        // Função para apagar o último caractere
+        function apagar() {
+            if (display.innerText.length > 1) {
+                display.innerText = display.innerText.slice(0, -1);
+            } else {
+                display.innerText = "0";
+            }
+        }
+
+        // Função para definir funções
+        function definirFuncao() {
+            const funcaoInput = document.getElementById("funcaoInput").value;
+            const [nome, expressao] = funcaoInput.split('=').map(item => item.trim());
+            if (nome && expressao) {
+                funcoes[nome] = expressao;
+                alert(`Função ${nome} definida!`);
+                document.getElementById("funcaoInput").value = '';
+            } else {
+                alert("Por favor, insira uma função no formato: f(x) = expressão");
+            }
+        }
+
+        // Função para calcular funções definidas
+        function calcularFuncao() {
+            const funcaoInput = document.getElementById("funcaoInput").value;
+            const nome = funcaoInput.trim();
+            if (funcoes[nome]) {
+                let valorX = parseFloat(prompt("Digite o valor de x:"));
+                let expressao = funcoes[nome].replace(/x/g, valorX);
+                let resultado = eval(expressao);
+                display.innerText = resultado;
+            } else {
+                alert("Função não definida. Por favor, defina a função primeiro.");
+            }
+        }
+
+        // Evento de teclado para interações
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (!isNaN(key) || ['+', '-', '*', '/', '.', '%'].includes(key)) {
+                adicionarOperacao(key);
+            } else if (key === 'Enter') {
+                calcular();
+            } else if (key === 'Backspace') {
+                apagar();
+            } else if (key === 'Escape') {
+                limpar();
+            }
+        });
+    </script>
     <div>
         <label for="valorRegraTres">CALCULAR TUBOS:</label>
         <input type="number" id="valorRegraTres" placeholder="Digite um valor">
