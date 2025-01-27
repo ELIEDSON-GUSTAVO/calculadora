@@ -141,7 +141,7 @@
 
         function calcularComprimento() {
             const comprimento = document.getElementById("valorComprimento").value;
-            const resultado = (comprimento * 0.7) / 300 + 2; // Novo cálculo
+            const resultado = (comprimento * 0.33) / 300 + 2; // Novo cálculo
             document.getElementById("resultadoComprimento").innerText = "Faixa: " + resultado.toFixed(2).replace('.', ',') + " m";
             copiarParaAreaTransferencia(resultado.toFixed(2).replace('.', ',') + " m");
         }
